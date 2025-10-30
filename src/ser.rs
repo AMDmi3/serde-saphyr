@@ -426,14 +426,7 @@ impl<'a, W: Write> YamlSer<'a, W> {
         if s.is_empty() { return false; }
         if s == "~" || s.eq_ignore_ascii_case("null") || s.eq_ignore_ascii_case("true")
             || s.eq_ignore_ascii_case("false") { return false; }
-        let bytes = s.as_bytes();
-        if bytes[0].is_ascii_whitespace()
-            || matches!(bytes[0], b'-' | b'?' | b':' | b'[' | b']' | b'{' | b'}' | b'#' | b'&' | b'*' | b'!' | b'|' | b'>' | b'\'' | b'"' | b'%' | b'@' | b'`')
-        { return false; }
-        if s.chars().any(|c| c.is_control()) { return false; }
-        // In values, ':' is allowed, but '#' would start a comment so still disallow '#'.
-        if s.contains('#') { return false; }
-        true
+        s.bytes().all(|b| b.is_ascii_alphanumeric())
     }
 
     /// Like `write_plain_or_quoted`, but intended for VALUE position where ':' is allowed.
@@ -533,13 +526,7 @@ fn is_plain_safe(s: &str) -> bool {
     if s.is_empty() { return false; }
     if s == "~" || s.eq_ignore_ascii_case("null") || s.eq_ignore_ascii_case("true")
         || s.eq_ignore_ascii_case("false") { return false; }
-    let bytes = s.as_bytes();
-    if bytes[0].is_ascii_whitespace()
-        || matches!(bytes[0], b'-' | b'?' | b':' | b'[' | b']' | b'{' | b'}' | b'#' | b'&' | b'*' | b'!' | b'|' | b'>' | b'\'' | b'"' | b'%' | b'@' | b'`')
-    { return false; }
-    if s.chars().any(|c| c.is_control()) { return false; }
-    if s.contains(':') || s.contains('#') { return false; }
-    true
+    s.bytes().all(|b| b.is_ascii_alphanumeric())
 }
 
 // ------------------------------------------------------------
