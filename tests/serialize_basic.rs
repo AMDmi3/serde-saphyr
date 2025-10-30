@@ -120,3 +120,16 @@ fn serialize_array_of_empty_maps() {
     let v2: VecOfMaps = serde_saphyr::from_str(&buf).expect("deserialize just serialized data");
     assert_eq!(v, v2);
 }
+
+#[test]
+fn serialize_unsafe_flow_map_values() {
+    let cases = vec![
+        "a[b]c",
+        "a{b}c",
+    ];
+    let v: BTreeMap<String, String> = cases.iter().enumerate().map(|(k, v)| (k.to_string(), v.to_string())).collect();
+    let mut buf = String::new();
+    serde_saphyr::to_writer(&mut buf, &serde_saphyr::FlowMap(v.clone())).expect("to_writer works");
+    let v2: BTreeMap<String, String> = serde_saphyr::from_str(&buf).expect("deserialize just serialized data");
+    assert_eq!(v, v2);
+}
