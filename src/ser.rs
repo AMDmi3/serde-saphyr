@@ -423,11 +423,7 @@ impl<'a, W: Write> YamlSer<'a, W> {
     /// This is slightly more permissive than `is_plain_safe` for keys: it allows ':' inside values.
     #[inline]
     fn is_plain_value_safe(s: &str) -> bool {
-        if s.is_empty() { return false; }
-        if s == "~" || s.eq_ignore_ascii_case("null") || s.eq_ignore_ascii_case("true")
-            || s.eq_ignore_ascii_case("false") { return false; }
-        if !s.as_bytes()[0].is_ascii_alphabetic() { return false; }
-        s.bytes().all(|b| b.is_ascii_alphanumeric())
+        is_plain_safe(s)
     }
 
     /// Like `write_plain_or_quoted`, but intended for VALUE position where ':' is allowed.
@@ -525,7 +521,7 @@ impl<'a, W: Write> YamlSer<'a, W> {
 #[inline]
 fn is_plain_safe(s: &str) -> bool {
     if s.is_empty() { return false; }
-    if s == "~" || s.eq_ignore_ascii_case("null") || s.eq_ignore_ascii_case("true")
+    if s == "~" || s.eq_ignore_ascii_case("y") || s.eq_ignore_ascii_case("n") || s.eq_ignore_ascii_case("null") || s.eq_ignore_ascii_case("true")
         || s.eq_ignore_ascii_case("false") { return false; }
     if !s.as_bytes()[0].is_ascii_alphabetic() { return false; }
     s.bytes().all(|b| b.is_ascii_alphanumeric())
