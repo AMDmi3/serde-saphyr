@@ -426,6 +426,7 @@ impl<'a, W: Write> YamlSer<'a, W> {
         if s.is_empty() { return false; }
         if s == "~" || s.eq_ignore_ascii_case("null") || s.eq_ignore_ascii_case("true")
             || s.eq_ignore_ascii_case("false") { return false; }
+        if !s.as_bytes()[0].is_ascii_alphabetic() { return false; }
         s.bytes().all(|b| b.is_ascii_alphanumeric())
     }
 
@@ -526,6 +527,7 @@ fn is_plain_safe(s: &str) -> bool {
     if s.is_empty() { return false; }
     if s == "~" || s.eq_ignore_ascii_case("null") || s.eq_ignore_ascii_case("true")
         || s.eq_ignore_ascii_case("false") { return false; }
+    if !s.as_bytes()[0].is_ascii_alphabetic() { return false; }
     s.bytes().all(|b| b.is_ascii_alphanumeric())
 }
 
